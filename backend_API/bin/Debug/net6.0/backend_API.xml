@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>backend_API</name>
+    </assembly>
+    <members>
+        <member name="M:backend_API.Controllers.ActivityCategoryController.GetActivityCategory">
+            <summary>
+            Responsavel por carregar todas as ActivityCategory dentro da DB, converter em listas e apresentar ao user.Tipo=Admin
+            </summary>
+            <returns> lista de dto's
+            </returns>
+            <remarks> 
+            Representa as 'Category' no UI   
+            </remarks>
+        </member>
+        <member name="M:backend_API.Controllers.ActivityCategoryController.GetCategory(System.Int32)">
+            <summary>
+            Responsavel por apresentar as categorias, de acordo com o seu ID
+            </summary>
+            <returns>Category DTO</returns>
+            <remarks>
+            Cada categoria tem um ID unico
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:backend_API.Controllers.ActivityCategoryController.PostActivityCategory(backend_API.Models.ActivityCategory.ActivityCategoryPost)" -->
+        <member name="M:backend_API.Controllers.ActivityCategoryController.DeleteActivityCategory(System.Int32)">
+            <summary>
+            Responsavel por apagar uma categoria da DB
+            </summary>
+            <returns>Default Response para tratamento da frontend</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:backend_API.Controllers.DeafultResponse.Code" -->
+        <!-- Badly formed XML comment ignored for member "P:backend_API.Controllers.DeafultResponse.Description" -->
+        <!-- Badly formed XML comment ignored for member "P:backend_API.Controllers.DeafultResponse.Id" -->
+        <!-- Badly formed XML comment ignored for member "P:backend_API.Controllers.DeafultResponse.Errors" -->
+        <member name="M:backend_API.Controllers.WorkerProfileController.GetWorkerProfiles">
+            <summary>
+            Metodo responsavel por carregar todos os user dentro da DB, converter em listas e apresentar ao user.Tipo=Admin
+            </summary>
+            <returns>lista de dto's
+            </returns>
+            <remarks>
+            
+            Sample 
+            Get/api/asAdmin
+            
+            </remarks>
+        </member>
+        <member name="T:backend_API.Migrations.rowmoved2">
+            <inheritdoc />
+        </member>
+        <member name="M:backend_API.Migrations.rowmoved2.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:backend_API.Migrations.rowmoved2.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:backend_API.Migrations.rowmoved2.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:backend_API.Migrations.final">
+            <inheritdoc />
+        </member>
+        <member name="M:backend_API.Migrations.final.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:backend_API.Migrations.final.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:backend_API.Migrations.final.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
