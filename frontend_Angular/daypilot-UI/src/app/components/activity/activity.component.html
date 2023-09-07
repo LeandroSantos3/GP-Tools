@@ -1,0 +1,247 @@
+<button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Adicionar nova Tarefa
+</button>
+
+<table class="table table-striped" *ngIf="activities && activities.length>0">
+  <thead>
+    <tr>
+      <th scope="col" class="small">Id</th>
+      <th scope="col" class="small">Name</th>
+      <th scope="col" class="small">Description</th>
+      <th scope="col" class="small">Category Id</th>
+      <th scope="col" class="small">Category State Id</th>
+      <th scope="col" class="small">Created By</th>
+      <th scope="col" class="small">Created Date</th>
+      <th scope="col" class="small">Start Date</th>
+      <th scope="col" class="small">End Date</th>
+      <th scope="col" class="small">Total Hours</th>
+      <th scope="col" class="small">Updated By</th>
+      <th scope="col" class="small">Update Date</th>
+      <th scope="col" class="small">Parent Id</th>
+      <th scope="col" class="small">Is Active</th>
+      <th scope="col" class="small">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let activity of activities">
+      <td class="small">{{activity.id}}</td>
+      <td class="small"><b>{{activity.name}}</b></td>
+      <td class="small">{{activity.description}}</td>
+      <td class="small">{{activity.activityCategoryId}}</td>
+      <td class="small">{{activity.activityCategoryStateId}}</td>
+      <td class="small">{{activity.createdBy}}</td>
+      <td class="small">{{activity.createdDate | date:'dd/MM/yyyy' }}</td>
+      <td class="small">{{activity.startDate | date:'dd/MM/yyyy' }}</td>
+      <td class="small">{{activity.endDate | date:'dd/MM/yyyy' }}</td>
+      <td class="small">{{activity.totalHours}}</td>
+      <td class="small">{{activity.updatedBy}}</td>
+      <td class="small">{{activity.updateDate | date:'dd/MM/yyyy' }}</td>
+      <td class="small">{{activity.parentId}}</td>
+      <td class="small">{{activity.isActive}}</td>
+
+      <td class="small">
+        <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#btEdit"
+          [routerLink]="['/Activity/', activity.id]" (click)="getActivity()"> Editar</a>
+
+        <button type="button" class="btn btn-danger" (click)="deleteActivity(activity.id.toString())">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p *ngIf="!activities || activities.length<=0">No activity found</p>
+
+<!-- MODAL POST -->
+
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">POST ACTIVITY</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="addActivityForm" (ngSubmit)="postActivity()" #formDir="ngForm">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control" id="name" placeholder="Example Name Input" name="name" formControlName="name" required [(ngModel)]="addActivityRequest.name">
+            </div>
+            <div *ngIf="addActivityForm?.get('name')?.invalid && formDir.submitted" class="text-danger">
+              **CAMPO OBRIGATÓRIO.
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input type="text" class="form-control" id="description" placeholder="Example Description Input" name="description" [(ngModel)]="addActivityRequest.description">
+            </div>
+            <div class="form-group">
+              <label for="activityCategoryId">Activity Category</label>
+              <select class="form-control" id="activityCategoryId" name="activityCategoryId" formControlName="activityCategoryId" required [(ngModel)]="addActivityRequest.activityCategoryId">
+                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+              </select>
+              <div *ngIf="addActivityForm?.get('activityCategoryId')?.invalid && formDir.submitted" class="text-danger">
+                **CAMPO OBRIGATÓRIO.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="activityCategoryStateId">Activity Category State</label>
+              <select class="form-control" id="activityCategoryStateId" name="activityCategoryStateId" formControlName="activityCategoryStateId" required [(ngModel)]="addActivityRequest.activityCategoryStateId">
+                <option *ngFor="let categoryState of categoriesState" [value]="categoryState.id">{{ categoryState.name }}</option>
+              </select>
+              <div *ngIf="addActivityForm?.get('activityCategoryStateId')?.invalid && formDir.submitted" class="text-danger">
+                **CAMPO OBRIGATÓRIO.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="createdBy">Created By</label>
+              <select class="form-control" id="createdBy" name="createdBy" formControlName="createdBy" required [(ngModel)]="addActivityRequest.createdBy">
+                <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+              </select>
+              <div *ngIf="addActivityForm?.get('createdBy')?.invalid && formDir.submitted" class="text-danger">
+                **CAMPO OBRIGATÓRIO.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="startDate">Start Date</label>
+              <input type="datetime-local" class="form-control" id="startDate" placeholder="Example Start Date Input" name="startDate" formControlName="startDate" [(ngModel)]="addActivityRequest.startDate" required>
+              <div *ngIf="addActivityForm?.get('startDate')?.invalid && formDir.submitted" class="text-danger">
+                **CAMPO OBRIGATÓRIO.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="endDate">End Date</label>
+              <input type="datetime-local" class="form-control" id="endDate" placeholder="Example End Date Input" name="endDate" formControlName="endDate" [(ngModel)]="addActivityRequest.endDate" required>
+              <div *ngIf="addActivityForm?.get('endDate')?.invalid && formDir.submitted" class="text-danger">
+                **CAMPO OBRIGATÓRIO.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="totalHours">Total Hours</label>
+              <input type="text" class="form-control" id="totalHours" placeholder="Example Total Hours Input" name="totalHours" formControlName="totalHours" [(ngModel)]="addActivityRequest.totalHours" required>
+              <div *ngIf="addActivityForm?.get('totalHours')?.invalid && formDir.submitted" class="text-danger">
+                **CAMPO OBRIGATÓRIO.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="parentId">Parent Id</label>
+              <select class="form-control" id="parentId" placeholder="Example Parent Id Input" name="parentId" [(ngModel)]="addActivityRequest.parentId">
+                <option [ngValue]="null">Nenhum</option>
+                <option *ngFor="let activity of activities" [value]="activity.id">{{ activity.name }}</option>
+              </select>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-success" data-bs-dismiss="modal" data-bs-target="Sucesso" [disabled]="addActivityForm.invalid">Inserir</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- MODAL 2 -->
+    <!-- Button trigger modal -->
+    <!--Criar um modal que tenha todos os campos apra futuro put, com acesso a dropdown-->
+    
+    <div class="modal fade" id="btEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">EDITAR ATIVIDADE</h5>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="putActivityForm" (ngSubmit)="putActivity()" #formDir="ngForm" >  
+                <div class="form-group">
+                  <label for="id">Id</label>
+                  <input type="text" class="form-control" id="id" placeholder="Example input" name="id" formControlName="id" readonly [(ngModel)]="putActivityRequest.id">
+                </div>                      
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Example input" name="name" formControlName="namePut" [(ngModel)]="putActivityRequest.name" required>
+                  <div *ngIf="putActivityForm.get('namePut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                </div>
+                </div>
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <input type="text" class="form-control" id="description" placeholder="Example input" name="description" formControlName="descriptionPut" [(ngModel)]="putActivityRequest.description" required>
+                  <div *ngIf="putActivityForm.get('descriptionPut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                </div>
+                </div>
+                <div class="form-group">
+                  <label for="activityCategoryId">Activity Category</label>
+                  <select class="form-control" id="activityCategoryId" name="activityCategoryId" formControlName="activityCategoryIdPut" [(ngModel)]="putActivityRequest.activityCategoryId" required>
+                    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                  </select>
+                  <div *ngIf="putActivityForm.get('activityCategoryIdPut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                </div>
+                </div>
+                <div class="form-group">
+                  <label for="activityStateId">Activity State</label>
+                  <select class="form-control" id="activityStateId" name="activityStateId" formControlName="activityCategoryStateIdPut" [(ngModel)]="putActivityRequest.activityCategoryStateId" required>
+                    <option *ngFor="let state of categoriesState" [value]="state.id">{{ state.name }}</option>
+                  </select>
+                  <div *ngIf="putActivityForm.get('activityCategoryStateIdPut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                </div>
+                </div>
+                <div class="form-group">
+                  <label for="startDate">Start Date</label>
+                  <input type="datetime-local" class="form-control" id="startDate" placeholder="Example input" name="startDate" formControlName="startDatePut" [(ngModel)]="putActivityRequest.startDate" required>
+                  <div *ngIf="putActivityForm.get('startDatePut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                  </div>
+                </div>
+                
+                
+                <div class="form-group">
+                  <label for="endDate">End Date</label>
+                  <input type="datetime-local" class="form-control" id="endDate" placeholder="Example input" name="endDate" formControlName="endDatePut" [(ngModel)]="putActivityRequest.endDate" required>
+                  <div *ngIf="putActivityForm.get('endDatePut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                </div>
+                </div>
+                <div class="form-group">
+                  <label for="totalHours">Total Hours</label>
+                  <input type="text" class="form-control" id="totalHours" placeholder="Example input" name="totalHours" formControlName="totalHoursPut" [(ngModel)]="putActivityRequest.totalHours" required>
+                  <div *ngIf="putActivityForm.get('totalHoursPut')?.invalid && formDir.submitted" class="text-danger">
+                    **CAMPO OBRIGATÓRIO.
+                </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="updatedBy">updated By</label>
+                  <select class="form-control" id="updatedBy" placeholder="Example input" name="updatedBy" formControlName="updatedByPut" [(ngModel)]="putActivityRequest.updatedBy" required >
+                    <!-- <option [ngValue]="null">Nenhum</option> -->
+                    <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option> 
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="parentId">Parent Id</label>
+                  <select class="form-control" id="parentId" placeholder="Example input" name="parentId" formControlName="parentIdPut" [(ngModel)]="putActivityRequest.parentId" required >
+                    <option [ngValue]="null">Nenhum</option>
+                    <option *ngFor="let activity of activities" [value]="activity.id">{{ activity.name }}</option> 
+                  </select>
+                </div>    
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                  <button type="submit" class="btn btn-warning" data-bs-dismiss="modal" data-bs-target="Sucesso">Editar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>

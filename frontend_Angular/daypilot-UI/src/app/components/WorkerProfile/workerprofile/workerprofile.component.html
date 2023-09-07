@@ -1,0 +1,140 @@
+<!-- 
+<app-admin-navbar *ngIf="userType === 'admin' && sessionAtivo"></app-admin-navbar>
+<app-dev-navbar *ngIf="userType === 'dev' && sessionAtivo"></app-dev-navbar> -->
+
+<button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Adicionar no colaborador
+</button>
+
+<table class="table table-striped" style="width: 100%;" *ngIf="workerprofiles && workerprofiles.length>0">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Code</th>
+            <th scope="col">CreatedBy</th>
+            <th scope="col">CreatedDate</th>
+            <th scope="col">UpdatedBy</th>
+            <th scope="col">UpdatedDate</th>
+            <th scope="col">IsActive</th>
+            <th> Actions </th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let workerprofile of workerprofiles">
+            <td>{{workerprofile.id}}</td>
+            <td>{{workerprofile.name}}</td>
+            <td>{{workerprofile.code}}</td>
+            <td>{{workerprofile.createdBy}}</td>
+            <td>{{workerprofile.createdDate}}</td>
+            <td>{{workerprofile.updateBy}}</td>
+            <td>{{workerprofile.updatedDate}}</td>
+            <td>{{workerprofile.isActive}}</td>
+            <td>
+                <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#btEdit"
+                [routerLink]="['/workerprofile/profile', workerprofile.id]" (click)="getWorkerProfile()" >
+                Editar
+                </a>
+                <a class="btn btn-danger" (click)="deleteWorkerProfile(workerprofile.id.toString())">Eliminar</a>
+                <!-- <button type="button" class="btn btn-success" (click)="putWorkerProfile()"><i class="far fa-trash-alt"></i></button> -->
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="modal-dialog modal-dialog-centered">
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">POST WORKER PROFILE</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="addWorkerForm" (ngSubmit)="postWorkerProfile()"  #formDir="ngForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Example input" name="name"
+                              formControlName="name"  [(ngModel)]="addWorkerProfileRequest.name" required>
+                        </div>
+                        <div *ngIf="addWorkerForm?.get('name')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div> 
+                        <div class="form-group">
+                            <label for="code">Code</label>
+                            <input type="number" class="form-control" id="code" placeholder="123" name="code"
+                              formControlName="code"  [(ngModel)]="addWorkerProfileRequest.code" required>
+                        </div>
+                        <div *ngIf="addWorkerForm?.get('code')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div> 
+                        <div class="form-group">
+                            <label for="createdBy">Created By</label>
+                            <select class="form-control" id="createdBy" name="createdBy" formControlName="createdBy" [(ngModel)]="addWorkerProfileRequest.createdBy" required>
+                                <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">
+                                    {{ workerprofile.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="addWorkerForm?.get('createdBy')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div> 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                                data-bs-target="Sucesso" [disabled]="addWorkerForm.invalid" >Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1 -->
+
+    <!-- PREEECHER OS DADOS AQUI COM O QUE VEM DA API E USAR O MESMO MODEL PARA VIEW E DELETE -->
+
+    <div class="modal fade" id="btEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">PUT WORKER PROFILE</h5>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="putWorkerForm" (ngSubmit)="putWorkerProfile()"  #form="ngForm" >
+                        <div class="form-group">
+                            <label for="id">Id</label>
+                            <input type="text" class="form-control" id="id" placeholder="Example id" name="id" readonly
+                                [(ngModel)]="putWorkerProfileRequest.id">
+                        </div> 
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Example input" name="name"
+                               formControlName="namePut" [(ngModel)]="putWorkerProfileRequest.name" required>
+                        </div>
+                        <div *ngIf="addWorkerForm?.get('namePut')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div> 
+                        <div class="form-group">
+                            <label for="code">Code</label>
+                            <input type="number" class="form-control" id="code" placeholder="123" name="code"
+                               formControlName="codePut" [(ngModel)]="putWorkerProfileRequest.code" required>
+                        </div>
+                        <div *ngIf="addWorkerForm?.get('codePut')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-warning" data-bs-dismiss="modal"
+                                data-bs-target="Sucesso" [disabled]="putWorkerForm.invalid">Editar</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    <p *ngIf="!workerprofiles || workerprofiles.length<=0">No workerprofile found</p>

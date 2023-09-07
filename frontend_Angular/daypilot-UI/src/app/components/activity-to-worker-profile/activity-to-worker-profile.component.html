@@ -1,0 +1,192 @@
+
+<button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Adicionar nova associação
+</button>
+
+<table class="table table-striped" *ngIf="activityWorkerProfiles && activityWorkerProfiles.length>0"> 
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Activity Id</th>
+        <th scope="col">Worker Profile Id</th>
+        <th scope="col">Created By</th>
+        <th scope="col">Created Date</th>
+        <th scope="col">Total Hours</th>
+        <th scope="col">Updated By</th>
+        <th scope="col">Updated Date</th>
+        <th scope="col">Is Associated</th>
+        <th scope="col">Actions</th>
+        
+
+</tr>
+</thead>
+<tbody>
+<tr *ngFor="let activityWorkerProfiles of activityWorkerProfiles">
+    <td>{{activityWorkerProfiles.id}}</td>            
+    <td>{{activityWorkerProfiles.activityId}}</td>
+    <td>{{activityWorkerProfiles.workerProfileId}}</td>
+    <td>{{activityWorkerProfiles.createdBy}}</td>
+    <td>{{activityWorkerProfiles.createdDate}}</td>
+    <td>{{activityWorkerProfiles.totalHours}}</td>
+    <td>{{activityWorkerProfiles.updateBy}}</td>
+    <td>{{activityWorkerProfiles.updatedDate}}</td>
+    <td>{{activityWorkerProfiles.isAssociated}}</td>
+    
+    <td>
+        <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#btEdit" 
+            [routerLink]="['/ActivityWorkerProfile/allt/', activityWorkerProfiles.id]" (click)="getActivityWorkerProfile()" >
+        Editar </a>
+
+        <button type="button" class="btn btn-danger" (click)="deleteActivityWorkerProfile(putActivityWorkerProfileRequest.id.toString())">Eliminar</button>
+    </td> 
+    </tr>
+</tbody>
+</table>
+<p *ngIf="!activityWorkerProfiles || activityWorkerProfiles.length<=0">No activity found</p>
+
+
+
+
+
+
+<!-- MODAL Associate Worker to Activity -->
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Inserir Associacao Atividade to Colaborador </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="addActivityWorkerForm" (ngSubmit)="postActivityWorkerProfile()"  #formDir="ngForm">
+                      <div class="form-group">
+                        <label for="activityId">Activity ID</label>
+                        <select class="form-control" id="activityId" placeholder="Example Name Input" name="activityId" 
+                          formControlName="activityId" required [(ngModel)]="addActivityWorkerProfileRequest.activityId">
+                          <option *ngFor="let activity of activities" [value]="activity.id">{{ activity.name }}</option>
+                        </select>
+                        <div *ngIf="addActivityWorkerForm.get('activityId')?.invalid && formDir.submitted" class="text-danger">
+                          **CAMPO OBRIGATÓRIO.
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="workerProfileId">Worker Profile ID</label>
+                        <select class="form-control" id="workerProfileId" placeholder="Example Description Input" name="workerProfileId"
+                          [(ngModel)]="addActivityWorkerProfileRequest.workerProfileId">
+                          <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                        </select>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="createdBy">Created By</label>
+                        <select class="form-control" id="createdBy" name="createdBy" [(ngModel)]="addActivityWorkerProfileRequest.createdBy">
+                          <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                        </select>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="totalHours">Total Hours</label>
+                        <input type="number" class="form-control" id="totalHours" placeholder="Example Total Hours Input" name="totalHours" formControlName="totalHours" [(ngModel)]="addActivityWorkerProfileRequest.totalHours" required>
+                        <!-- <div *ngIf="addActivityWorkerForm.get('totalHours')?.invalid && formDir.submitted" class="text-danger">
+                          **CAMPO OBRIGATÓRIO.
+                        </div> -->
+                      </div>
+                      
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" data-bs-target="Sucesso" [disabled]="addActivityWorkerForm.invalid">Inserir</button>
+                      </div>
+                      
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PUT WORKER TO ACTIVITY -->
+
+     <!-- PREEECHER OS DADOS AQUI COM O QUE VEM DA API E USAR O MESMO MODEL PARA VIEW E DELETE -->
+
+     <div class="modal fade" id="btEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">PUT ACTIVITY WORKER PROFILE</h5>
+                </div>
+                <div class="modal-body">
+                    <form #form="ngForm" (ngSubmit)="putActivityWorkerProfile()">
+                        <div class="form-group">
+                            <label for="id">Id</label>
+                            <input type="text" class="form-control" id="id" placeholder="Example id" name="id" readonly
+                                [(ngModel)]="  putActivityWorkerProfileRequest.id">
+                        </div>                         
+                        <div class="form-group">
+                            <label for="activityId">Activity ID</label>
+                               <select class="form-control" id="activityId" placeholder="Example Name Input" name="activityId" 
+                                    [(ngModel)]="putActivityWorkerProfileRequest.activityId">
+                                    <option *ngFor="let activity of activities" [value]="activity.id">{{ activity.name }}</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="workerProfileId">Worker Profile ID</label>
+                                <select  class="form-control" id="workerProfileId" placeholder="Example Description Input" name="workerProfileId"
+                                    [(ngModel)]="putActivityWorkerProfileRequest.workerProfileId">
+                                    <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="createdBy">Created By</label>
+                            <select class="form-control" id="createdBy" name="createdBy" [(ngModel)]="putActivityWorkerProfileRequest.createdBy">
+                                <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateBy">UpdatedBy</label>
+                            <select class="form-control" id="updateBy" name="updateBy" [(ngModel)]="putActivityWorkerProfileRequest.updateBy">
+                                <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalHours">Total Hours</label>
+                            <input type="text" class="form-control" id="totalHours" placeholder="Example Description Input" name="totalHours"
+                                [(ngModel)]="putActivityWorkerProfileRequest.totalHours">   
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-warning" data-bs-dismiss="modal"
+                                data-bs-target="Sucesso">PUT</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        
+   <!-- Modal DELETE  -->
+   <!-- <div class="modal fade" id="ConfDel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Eliminar a Tarefa associada</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <input type="text" class="form-control" id="id" placeholder="Example id" name="id" readonly [(ngModel)]="putActivityWorkerProfileRequest.id">
+        <div class="modal-body">
+          Tem a certeza que deseja eliminar a Tarefa Associada?
+        </div>       
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          <button type="button" class="btn btn-danger"  data-bs-dismiss="modal" (click)="deleteActivityWorkerProfile(putActivityWorkerProfileRequest.id.toString())">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+                 -->
+

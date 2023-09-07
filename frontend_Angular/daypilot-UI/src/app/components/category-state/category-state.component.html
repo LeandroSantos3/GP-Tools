@@ -1,0 +1,189 @@
+<button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Adicionar novo Estado
+</button>
+
+<table class="table table-striped" *ngIf="categoriesState && categoriesState.length>0">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">isLocked</th>
+            <th scope="col">CreatedBy</th>
+            <th scope="col">CreatedDate</th>
+            <th scope="col">UpdatedBy</th>
+            <th scope="col">UpdatedDate</th>
+            <th scope="col">Activity Associate</th>
+            <th> Actions </th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let categorieState of categoriesState">
+            <td>{{categorieState.id}}</td>
+            <td>{{categorieState.name}}</td>
+            <td>{{categorieState.isLocked}}</td>
+            <td>{{categorieState.createdBy}}</td>
+            <td>{{categorieState.createdDate}}</td>
+            <td>{{categorieState.updateBy}}</td>
+            <td>{{categorieState.updatedDate}}</td>
+            <td>{{categorieState.activityCategoryId}}</td>
+
+            <td>
+                <button type="button" class="btn btn-warning" (click)="openModal(categorieState.id)">Editar</button>
+
+                <button type="button" class="btn btn-danger" (click)="openModalDel(categorieState.id)">Eliminar</button>
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- SE NAO -->
+<p *ngIf="!categoriesState || categoriesState.length<=0">No workerprofile found</p>
+
+<!-- MODAL -->
+
+<div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Adicionar nova categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="addStateForm" (ngSubmit)="postCategoryState()" #formDir="ngForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Example Name Input" name="name"
+                                [(ngModel)]="addCategoryState.name" formControlName="name" required>
+                        </div>  
+                        <div *ngIf="addStateForm?.get('name')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div> 
+                          <div class="form-group">
+                            <label for="createdBy">Created By</label>
+                            <select class="form-control" id="createdBy" name="createdBy" formControlName="createdBy" required [(ngModel)]="addCategoryState.createdBy" >
+                                <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                            </select>
+                            <div *ngIf="addStateForm?.get('createdBy')?.invalid && formDir.submitted" class="text-danger">
+                                **CAMPO OBRIGATÓRIO.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="activityCategoryId">Activity Category</label>
+                            <select class="form-control" id="activityCategoryId" name="activityCategoryId" formControlName="activityCategoryId" required [(ngModel)]="addCategoryState.activityCategoryId" >
+                                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                            </select>
+                            <div *ngIf="addStateForm?.get('activityCategoryId')?.invalid && formDir.submitted" class="text-danger">
+                                **CAMPO OBRIGATÓRIO.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                                data-bs-target="Sucesso" [disabled]="addStateForm.invalid">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR -->
+        <div class="modal fade" id="btEdit2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Editar um Estado de uma categoria</h5>
+                </div>
+                <div class="modal-body">
+                  <form [formGroup]="putStateForm" (ngSubmit)="putCategoryState()" #formDir2="ngForm">    
+                    <div>
+                      <label for="id">ID</label>
+                      <input type="text" class="form-control" id="id" placeholder="Example input" name="id" readonly formControlName="id" [(ngModel)]="putCategorieState.id">
+                    </div>              
+                    <div class="form-group">
+                      <label for="name">Name</label>
+                      <input type="text" class="form-control" id="name" placeholder="Example input" name="name" [(ngModel)]="putCategorieState.name" formControlName="namePut" required>
+                      <div *ngIf="putStateForm?.get('namePut')?.invalid && formDir2.submitted" class="text-danger">
+                        **CAMPO OBRIGATÓRIO.
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="isLocked">Is Locked?</label>
+                      <select class="form-control" id="isLocked" name="isLocked" [(ngModel)]="putCategorieState.isLocked" formControlName="isLockedPut" required>
+                        <option [ngValue]="true">true</option>
+                        <option [ngValue]="false">false</option>
+                      </select>
+                      <div *ngIf="putStateForm?.get('isLockedPut')?.invalid && formDir2.submitted" class="text-danger">
+                        **CAMPO OBRIGATÓRIO.
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="createdBy">Created By</label>
+                      <select class="form-control" id="createdBy" placeholder="Example input" name="createdBy" [(ngModel)]="putCategorieState.createdBy" formControlName="createdByPut" required>
+                        <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                      </select>
+                      <div *ngIf="putStateForm?.get('createdByPut')?.invalid && formDir2.submitted" class="text-danger">
+                        **CAMPO OBRIGATÓRIO.
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="updateBy">Update By</label>
+                      <select class="form-control" id="updateBy" placeholder="Example input" name="updateBy" [(ngModel)]="putCategorieState.updateBy" formControlName="updateByPut" required>
+                        <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                      </select>
+                      <div *ngIf="putStateForm?.get('updateByPut')?.invalid && formDir2.submitted" class="text-danger">
+                        **CAMPO OBRIGATÓRIO.
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="activityCategoryId">Activity Category</label>
+                      <select class="form-control" id="activityCategoryId" name="activityCategoryId" [(ngModel)]="putCategorieState.activityCategoryId"
+                         formControlName="activityCategoryIdPut" required>
+                        <option *ngFor="let categorie of categories" [value]="categorie.id">{{ categorie.name }}</option>
+                      </select>
+                      <div *ngIf="putStateForm?.get('activityCategoryIdPut')?.invalid && formDir2.submitted" class="text-danger">
+                        **CAMPO OBRIGATÓRIO.
+                      </div>
+                    </div>
+          
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                      <button type="submit" class="btn btn-warning" data-bs-dismiss="modal"
+                         data-bs-target="Sucesso" [disabled]="putStateForm.invalid">Atualizar</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
+        <!-- Modal -->
+   <div class="modal fade" id="ConfDelState" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Eliminar um Estado</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <input type="text" class="form-control" id="id" placeholder="Example id" name="id" 
+            readonly [(ngModel)]="putCategorieState.id">
+        <div class="modal-body">
+          Tem a certeza que deseja eliminar (soft delete) a Activity Category? {{putCategorieState.id}}
+        </div>       
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteCategoryState(putCategorieState.id.toString())">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+        

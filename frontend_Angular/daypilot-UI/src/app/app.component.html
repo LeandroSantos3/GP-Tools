@@ -1,0 +1,7 @@
+
+<app-admin-navbar *ngIf="userType === 'admin'"></app-admin-navbar>
+<app-dev-navbar *ngIf="userType === 'dev'"></app-dev-navbar>
+<!-- performe routing  -->
+<router-outlet></router-outlet>
+
+

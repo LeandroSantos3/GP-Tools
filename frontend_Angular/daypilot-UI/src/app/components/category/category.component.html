@@ -1,0 +1,163 @@
+
+<button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">
+   Adicionar Categoria
+</button>
+
+<table  class="table table-striped" style="width: 100%;" *ngIf="categories && categories.length>0">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">CreatedBy</th>
+            <th scope="col">CreatedDate</th>
+            <th scope="col">UpdatedBy</th>
+            <th scope="col">UpdatedDate</th>
+            <th> Actions </th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let category of categories">
+            <td>{{category.id}}</td>
+            <td>{{category.name}}</td>
+            <td>{{category.createdBy}}</td>
+            <td>{{category.createdDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{category.updateBy}}</td>
+            <td>{{category.updatedDate | date:'dd/MM/yyyy' }}</td>
+            <td>
+                <button type="button" class="btn btn-warning" (click)="openModal(category.id)">Editar</button>||
+
+                <button type="button" class="btn btn-danger" (click)="openModalDel(category.id)">Eliminar</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- SE NAO -->
+<p *ngIf="!categories || categories.length<=0">No workerprofile found</p>
+
+    <!-- Modal -->
+<div class="modal-dialog modal-dialog-centered">
+
+    <!-- POST  -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Inserir uma nova categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="addCategoryForm" (ngSubmit)="postCategory()" #formDir="ngForm">
+                        <div class="form-group">
+                          <label for="name">Name</label>
+                          <input type="text" class="form-control" id="name" placeholder="Example Name Input" name="name" formControlName="name"  [(ngModel)]="addCategory.name" required>
+                        </div>
+                        <div *ngIf="addCategoryForm?.get('name')?.invalid &&  formDir.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                          </div>    
+                        <div class="form-group">
+                            <label for="createdBy">Created By</label>
+                            <select class="form-control" id="createdBy" name="createdBy" formControlName="createdBy" required [(ngModel)]="addCategory.createdBy" >
+                                <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">{{ workerprofile.name }}</option>
+                            </select>
+                            <div *ngIf="addCategoryForm?.get('createdBy')?.invalid && formDir.submitted" class="text-danger">
+                                **CAMPO OBRIGATÓRIO.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                                data-bs-target="Sucesso" [disabled]="addCategoryForm.invalid">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--EDITAR -->
+
+    <!-- PREEECHER OS DADOS AQUI COM O QUE VEM DA API E USAR O MESMO MODEL PARA VIEW E DELETE -->      
+    <div class="modal slide-in-down" #btEditModal id="btEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar a categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="putCategoryForm" (ngSubmit)="putCategory()" #formDir2="ngForm">
+                    <div class="form-group">
+                        <label for="id">Id</label>
+                        <input type="text" class="form-control" id="id" placeholder="Example id" name="id" readonly
+                            formControlName="id" [ngModel]="putCategoryRequest.id">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Example input" name="name"
+                            formControlName="namePut"  [(ngModel)]="putCategoryRequest.name" required>
+                        <div *ngIf="putCategoryForm.get('namePut')?.invalid && formDir2.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="createdBy">Created By</label>
+                        <select class="form-control" id="createdBy" name="createdBy" formControlName="createdByPut" [(ngModel)]="putCategoryRequest.createdBy" required>
+                            <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">
+                                {{ workerprofile.name }}
+                            </option>
+                        </select>
+                        <div *ngIf="putCategoryForm.get('createdByPut')?.invalid && formDir2.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                        </div>
+                     </div>
+                   
+                    <div class="form-group">
+                        <label for="updateBy">Updated By</label>
+                        <select class="form-control" id="updateBy" name="updateBy" formControlName="updateByPut" [(ngModel)]="putCategoryRequest.updateBy" required>
+                            <option *ngFor="let workerprofile of workerprofiles" [value]="workerprofile.id">
+                                {{ workerprofile.name }}
+                            </option>
+                        </select>
+                        <div *ngIf="putCategoryForm.get('updatedByPut')?.invalid && formDir2.submitted" class="text-danger">
+                            **CAMPO OBRIGATÓRIO.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-warning" data-bs-dismiss="modal"
+                            data-bs-target="Sucesso" [disabled]="putCategoryForm.invalid">Editar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
+    
+    <!-- MODAL CONFIRM -->
+
+   <!-- Modal  -->
+   <div class="modal fade" id="ConfDel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Eliminar a categoria</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <input type="text" class="form-control" id="id" placeholder="Example id" name="id" readonly [(ngModel)]="putCategoryRequest.id">
+        <div class="modal-body">
+          Tem a certeza que deseja eliminar a Activity Category?
+        </div>       
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          <button type="button" class="btn btn-danger"  data-bs-dismiss="modal" (click)="deleteCategory(putCategoryRequest.id.toString())">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+  
